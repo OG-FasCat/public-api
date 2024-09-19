@@ -4,17 +4,13 @@ All endpoints for retrieving a FasCat user's data requires successful authorizat
 
 ### OAuth Configuration
 
-#### Client ID
-
-Available on request.
-
-#### Client Secret
+#### Client ID / Secret
 
 Available on request.
 
 #### Authorization URL
 
-This URL prompts a user to authorize your app to access the FasCat user's data. After the user grants authorization, FasCat will respond with an authorization code.
+This URL prompts a user to authorize your app to access the user's data. After the user grants authorization, FasCat will respond with an authorization code. On mobile platforms where the CoachCat app is installed, this URL will launch the app and prompt the user to authorize your app.
 
 ```
 https://api.fascatapi.com/auth/v1/oauth/authorize
