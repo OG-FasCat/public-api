@@ -126,3 +126,45 @@ Application access can be revoked by sending a DELETE request to the following e
 DELETE https://api.fascatapi.com/auth/v1/oauth/permissions
 Authorization: Bearer <access_token>
 ```
+
+A successful request returns `204 No Content` with an empty body.
+
+## Error Responses
+
+The [Token URL](#token-url) and the [deauthorization endpoint](#deauthorization) report errors in the form defined by [RFC 6749 §5.2](https://tools.ietf.org/html/rfc6749#section-5.2):
+
+```json
+{
+  "error": "invalid_grant",
+  "error_description": "The provided grant is invalid, expired, or revoked"
+}
+```
+
+Branch on `error` — it is a fixed, machine-readable code. `error_description` explains the failure to a developer reading logs; its wording can change at any time, so don't parse it.
+
+### Token endpoint errors
+
+Every error caused by the request returns `400 Bad Request` with one of:
+
+| `error` | Meaning |
+|---|---|
+| `invalid_request` | A required parameter is missing or empty — `grant_type`, `client_id`, `client_secret`, `code`, `redirect_uri`, or `refresh_token`. |
+| `invalid_client` | The `client_secret` does not match the client the authorization code was issued to. |
+| `invalid_grant` | The authorization code or refresh token is invalid, expired, already used, or revoked — or the `client_id` / `redirect_uri` does not match the one the code was issued for. |
+| `unsupported_grant_type` | `grant_type` is something other than `authorization_code` or `refresh_token`. |
+
+A `500` with `"error": "server_error"` is a fault on our side rather than a problem with your request; retry it.
+
+Both successful and failed token responses carry `Cache-Control: no-store` and `Pragma: no-cache`. Treat them as uncacheable — they contain credentials.
+
+### Deauthorization endpoint errors
+
+Errors here use codes from [RFC 6750 §3.1](https://tools.ietf.org/html/rfc6750#section-3.1), since the endpoint is authenticated with a Bearer token rather than client credentials:
+
+| Status | `error` | Meaning |
+|---|---|---|
+| 400 | `invalid_request` | The request could not be attributed to a user. |
+| 401 | `invalid_token` | The access token is not scoped to an application. |
+| 500 | `server_error` | Fault on our side; retry. |
+
+A missing, malformed, or expired `Authorization` header is rejected before the request reaches this endpoint, and returns `{"message": "Unauthorized"}` rather than the envelope above.
