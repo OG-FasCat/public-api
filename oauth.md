@@ -149,8 +149,8 @@ Every error caused by the request returns `400 Bad Request` with one of:
 | `error` | Meaning |
 |---|---|
 | `invalid_request` | A required parameter is missing or empty — `grant_type`, `client_id`, `client_secret`, `code`, `redirect_uri`, or `refresh_token`. |
-| `invalid_client` | The `client_secret` does not match the client the authorization code was issued to. |
-| `invalid_grant` | The authorization code or refresh token is invalid, expired, already used, or revoked — or the `client_id` / `redirect_uri` does not match the one the code was issued for. |
+| `invalid_client` | The `client_id` is not registered, or the `client_secret` does not match it. Returned on both grants. |
+| `invalid_grant` | The authorization code or refresh token is invalid, expired, already used, or revoked — or, on the `authorization_code` grant, the `client_id` / `redirect_uri` does not match the one the code was issued for. |
 | `unsupported_grant_type` | `grant_type` is something other than `authorization_code` or `refresh_token`. |
 
 A `500` with `"error": "server_error"` is a fault on our side rather than a problem with your request; retry it.
