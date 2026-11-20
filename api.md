@@ -71,9 +71,11 @@ Properties:
   - `title` - The workout's title.
   - `description` - The workout's description.
   - `duration` - The workout's duration in seconds.
-  - `thresholds` - The user's current sport type specific thresholds. For cycling and mountain biking, this includes:
-    - `power` - The workout's power threshold.
-    - `hr` - The workout's heart rate threshold.
+  - `thresholds` - The user's thresholds in force on the `end` date of the requested range. Every workout in the response carries the same values. For cycling and mountain biking, this includes:
+    - `power` - The power threshold (FTP), in watts.
+    - `hr` - The threshold heart rate, in beats per minute.
+
+    Each value is the newest one the user had set on or before `end`. If `end` falls before the first value the user set, the response carries that first value. If the user has never set a value for a threshold, it is sent as a default: `225` for `power` and `165` for `hr`.
   - `format` - The workout's format. Ex: `zwo`.
   - `steps` - The workout's steps in the requested format. For `zwo` format, this is the ZWO XML file contents as a string. Will be `null` if the `format` query param is not provided.
 
